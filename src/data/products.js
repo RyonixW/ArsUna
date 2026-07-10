@@ -182,7 +182,7 @@ const productData = [
     nom: 'Chiffonnette pour ardoise',
     codeBarres: '3154145846102',
     zone: 'Ardoises',
-    shelfNumber: 14,
+    shelfNumber: 12,
   },
   {
     id: 'feutres-velleda-pointe-fine-4',
@@ -365,7 +365,7 @@ const productData = [
     nom: 'Carnet reliure intégrale 11x17 100p Seyes',
     codeBarres: '3329680686814',
     zone: 'Cahiers',
-    shelfNumber: 3,
+    shelfNumber: 2,
   },
   {
     id: 'chemise-3-rabats-elastiques-iderama-pp-a4',
@@ -1014,7 +1014,7 @@ const productData = [
     nom: "Papier Clairalfa 80g ramette de 100 feuilles A4 - Blanc",
     codeBarres: '3329680413908',
     zone: 'Papeterie',
-    shelfNumber: 8,
+    shelfNumber: 6,
   },
   {
     id: 'item-3329686187605',
@@ -1077,7 +1077,7 @@ const productData = [
     nom: "Paquet de 10 chemises ROCK'S 210G couleurs assorties",
     codeBarres: '3288582170015',
     zone: 'Classement',
-    shelfNumber: 11,
+    shelfNumber: 15,
   },
   {
     id: 'item-3148950027566',
@@ -1105,7 +1105,7 @@ const productData = [
     nom: "Pochette a fermeture eclair en plastique souple",
     codeBarres: '3130630341406',
     zone: 'Classement',
-    shelfNumber: 8,
+    shelfNumber: 15,
   },
   {
     id: 'item-3148950271174',
@@ -1316,7 +1316,7 @@ const productData = [
     nom: 'Intercalaires A4 maxi 6 positions',
     codeBarres: '3130630024064',
     zone: 'Papeterie',
-    shelfNumber: 7,
+    shelfNumber: 9,
   },
   {
     id: 'item-2000000000725',
@@ -1848,6 +1848,13 @@ const productData = [
     shelfNumber: 12,
   },
   {
+    id: 'item-3270241119251',
+    nom: 'ETIQUETTES BLANCHES 38*50',
+    codeBarres: '3270241119251',
+    zone: 'Papeterie',
+    shelfNumber: 12,
+  },
+  {
     id: 'item-3130630558293',
     nom: 'Chemise à élastiques 3 rabats Maxi capacity carte lustrée pelliculée 425gm² Iderama A4 couleur aléatoire',
     codeBarres: '3130630558293',
@@ -1895,14 +1902,14 @@ const productData = [
     nom: 'Répertoire piqué 11x17 96p Q.5x5',
     codeBarres: '3329680636093',
     zone: 'Papeterie',
-    shelfNumber: 15,
+    shelfNumber: 16,
   },
   {
     id: 'item-3130630858706',
     nom: 'Protège-documents en polypropylène semi rigide IDERAMA PP 80 vues - A4',
     codeBarres: '3130630858706',
     zone: 'Classement',
-    shelfNumber: 17,
+    shelfNumber: 16,
   },
   {
     id: 'item-4006381467285',
@@ -2008,7 +2015,7 @@ const productData = [
     nom: 'Papier à dessin mi-teintes couleurs pastels 24x32 cm',
     codeBarres: '3148950027894',
     zone: 'Dessin',
-    shelfNumber: 4,
+    shelfNumber: 3,
   },
   {
     id: 'item-4005401816003',
@@ -2101,7 +2108,7 @@ const productData = [
     nom: 'Carreaux Dessin 10/10',
     codeBarres: '3329680378504',
     zone: 'Dessin',
-    shelfNumber: 0,
+    shelfNumber: 2,
   },
   {
     id: 'item-3329680379600',
@@ -2145,6 +2152,14 @@ const productData = [
     zone: 'Dessin',
     commentaire: 'étagère à gauche',
     shelfNumber: 5,
+  },
+  {
+    id: 'item-4005401158011',
+    nom: 'Boîte métal de 12 crayons Castle',
+    codeBarres: '4005401158011',
+    zone: 'Dessin',
+    commentaire: 'derrière',
+    shelfNumber: 7,
   },
   {
     id: 'item-3168070980121',
@@ -2367,7 +2382,8 @@ const productData = [
     nom: 'Chemise à élastiques 3 rabat Maxi Capacity Iderama A4',
     codeBarres: '3130630559290',
     zone: 'Classement',
-    shelfNumber: 7,
+    commentaire: 'on prend les 82XX/83XX',
+    shelfNumber: 9,
   },
   {
     id: 'item-3329680175516',

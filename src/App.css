@@ -694,16 +694,16 @@ button:focus-visible {
 
 .page-review-panel {
   position: relative;
-  width: min(100%, 960px);
-  height: calc(100svh - clamp(28px, 6vw, 56px));
+  width: min(100%, 860px);
+  height: calc(100svh - clamp(48px, 8vw, 84px));
   display: grid;
   grid-template-rows: auto auto auto auto minmax(0, 1fr);
-  gap: clamp(10px, 2vh, 18px);
+  gap: clamp(7px, 1.4vh, 12px);
   margin: 0 auto;
-  padding: clamp(18px, 3vw, 34px);
-  border-radius: 28px;
+  padding: clamp(14px, 2.4vw, 24px);
+  border-radius: 22px;
   background: #ffffff;
-  box-shadow: 28px 28px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 18px 18px 0 rgba(0, 0, 0, 0.1);
 }
 
 .page-review-topbar {
@@ -715,68 +715,68 @@ button:focus-visible {
 
 .page-review-topbar span {
   color: #58615b;
-  font-size: clamp(0.92rem, 1.8vw, 1.1rem);
+  font-size: clamp(0.78rem, 1.5vw, 0.95rem);
   font-weight: 900;
 }
 
 .secondary-action {
   width: auto;
-  min-width: 112px;
-  min-height: 44px;
+  min-width: 96px;
+  min-height: 38px;
   padding: 0 14px;
   border-radius: 10px;
   background: #f1f4f1;
   color: #17201a;
-  font-size: 0.95rem;
+  font-size: 0.84rem;
 }
 
 .page-review-panel h1 {
   margin: 0;
   text-align: center;
   color: #050706;
-  font-size: clamp(2.2rem, 7vw, 4.4rem);
+  font-size: clamp(1.55rem, 4.8vw, 3rem);
   line-height: 0.95;
   font-weight: 500;
 }
 
 .review-add-row {
-  width: min(100%, 560px);
+  width: min(100%, 460px);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 54px;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  gap: 8px;
   justify-self: center;
 }
 
 .review-add-row input {
   min-width: 0;
-  height: 54px;
-  padding: 0 16px;
+  height: 44px;
+  padding: 0 14px;
   border: 2px solid #dfe4df;
   border-radius: 12px;
   background: #ffffff;
   color: #17201a;
-  font: 900 clamp(1rem, 2vw, 1.12rem) ui-monospace, Consolas, monospace;
+  font: 900 clamp(0.88rem, 1.7vw, 1rem) ui-monospace, Consolas, monospace;
 }
 
 .review-add-row button,
 .review-line-remove {
-  width: 54px;
-  min-width: 54px;
-  height: 54px;
-  min-height: 54px;
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  min-height: 44px;
   padding: 0;
   border: 3px solid #111814;
   border-radius: 999px;
   background: #ffffff;
   color: #050706;
-  font-size: 2.2rem;
+  font-size: 1.8rem;
   line-height: 1;
 }
 
 .review-line-remove {
   border-color: #cf3b35;
   color: #cf3b35;
-  font-size: 1.8rem;
+  font-size: 1.45rem;
   font-weight: 900;
 }
 
@@ -793,38 +793,38 @@ button:focus-visible {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: clamp(8px, 1.4vh, 13px);
+  gap: clamp(5px, 1vh, 9px);
   overflow: auto;
-  padding: 2px clamp(54px, 7vw, 80px) 88px 0;
+  padding: 2px clamp(44px, 6vw, 64px) 70px 0;
 }
 
 .review-line {
   display: grid;
-  grid-template-columns: 116px minmax(0, 1fr) 58px;
+  grid-template-columns: 94px minmax(0, 1fr) 48px;
   align-items: center;
   gap: clamp(8px, 2vw, 18px);
-  min-height: 72px;
-  border-bottom: 6px dotted #111814;
+  min-height: 54px;
+  border-bottom: 4px dotted #111814;
 }
 
 .review-quantity {
   display: grid;
-  grid-template-columns: 32px 36px 32px;
+  grid-template-columns: 26px 30px 26px;
   align-items: center;
   justify-content: start;
   gap: 0;
 }
 
 .review-quantity button {
-  width: 32px;
-  min-width: 32px;
-  height: 42px;
-  min-height: 42px;
+  width: 26px;
+  min-width: 26px;
+  height: 34px;
+  min-height: 34px;
   padding: 0;
   border-radius: 8px;
   background: transparent;
   color: #050706;
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-size: clamp(1.25rem, 3vw, 2rem);
   line-height: 1;
 }
 
@@ -836,7 +836,7 @@ button:focus-visible {
 .review-quantity strong {
   text-align: center;
   color: #050706;
-  font-size: clamp(1.9rem, 4.5vw, 3rem);
+  font-size: clamp(1.35rem, 3.2vw, 2.1rem);
   font-weight: 500;
   line-height: 1;
 }
@@ -851,7 +851,7 @@ button:focus-visible {
   min-width: 0;
   overflow: hidden;
   color: #050706;
-  font-size: clamp(1.02rem, 2.4vw, 1.55rem);
+  font-size: clamp(0.85rem, 2vw, 1.18rem);
   font-weight: 500;
   line-height: 1.05;
   text-overflow: ellipsis;
@@ -860,17 +860,25 @@ button:focus-visible {
 
 .review-item-text code {
   color: #17201a;
-  font: 850 clamp(0.82rem, 1.8vw, 1rem) ui-monospace, Consolas, monospace;
+  font: 950 clamp(0.9rem, 1.8vw, 1.1rem) ui-monospace, Consolas, monospace;
+}
+
+.review-line.duplicate-last-four {
+  background: #fff8e5;
+}
+
+.review-item-text code.duplicate-last-four {
+  color: #9b5a00;
 }
 
 .review-next-action {
   position: absolute;
   right: clamp(-24px, -2vw, -12px);
   top: 50%;
-  width: 86px;
-  min-width: 86px;
-  height: 86px;
-  min-height: 86px;
+  width: 70px;
+  min-width: 70px;
+  height: 70px;
+  min-height: 70px;
   padding: 0 16px;
   border-radius: 999px;
   transform: translateY(-50%);
@@ -1215,74 +1223,76 @@ button:focus-visible {
 
 @media (max-width: 760px) {
   .page-review-screen {
-    padding: 10px;
+    padding: 12px;
   }
 
   .page-review-panel {
-    height: calc(100svh - 20px);
-    gap: 10px;
-    padding: 16px 12px;
-    border-radius: 22px;
-    box-shadow: 12px 12px 0 rgba(0, 0, 0, 0.12);
+    height: calc(100svh - 24px);
+    gap: 7px;
+    padding: 12px 10px;
+    border-radius: 18px;
+    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.1);
   }
 
   .page-review-panel h1 {
-    font-size: clamp(2rem, 10vw, 3.2rem);
+    font-size: clamp(1.45rem, 7vw, 2.3rem);
   }
 
   .review-add-row {
-    grid-template-columns: minmax(0, 1fr) 48px;
+    grid-template-columns: minmax(0, 1fr) 40px;
   }
 
   .review-add-row button,
   .review-line-remove {
-    width: 48px;
-    min-width: 48px;
-    height: 48px;
-    min-height: 48px;
-    font-size: 2rem;
-  }
-
-  .review-line-remove {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
     font-size: 1.6rem;
   }
 
+  .review-line-remove {
+    font-size: 1.25rem;
+  }
+
   .review-page-list {
-    padding-right: 48px;
-    padding-bottom: 76px;
+    padding-right: 40px;
+    padding-bottom: 58px;
   }
 
   .review-line {
-    grid-template-columns: 94px minmax(0, 1fr) 50px;
-    min-height: 66px;
+    grid-template-columns: 82px minmax(0, 1fr) 42px;
+    min-height: 48px;
     gap: 8px;
     border-bottom-width: 4px;
   }
 
   .review-quantity {
-    grid-template-columns: 26px 32px 26px;
+    grid-template-columns: 22px 28px 22px;
   }
 
   .review-quantity button {
-    width: 26px;
-    min-width: 26px;
-    font-size: 2rem;
+    width: 22px;
+    min-width: 22px;
+    height: 30px;
+    min-height: 30px;
+    font-size: 1.45rem;
   }
 
   .review-quantity strong {
-    font-size: 2.1rem;
+    font-size: 1.55rem;
   }
 
   .review-item-text strong {
-    font-size: clamp(0.9rem, 4vw, 1.08rem);
+    font-size: clamp(0.78rem, 3.5vw, 0.95rem);
   }
 
   .review-next-action {
     right: 8px;
-    width: 68px;
-    min-width: 68px;
-    height: 68px;
-    min-height: 68px;
+    width: 54px;
+    min-width: 54px;
+    height: 54px;
+    min-height: 54px;
   }
 
   .order-screen {

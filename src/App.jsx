@@ -80,7 +80,36 @@ const roundTableLocation = {
   mapY: 38.5,
 }
 
-const coverColibriCodes = new Set(['803299997296', '8032919897296', '8032919997296'])
+const coverColibriCanonicalCode = '8032919897296'
+const coverColibriCodes = new Set(['803299997296', coverColibriCanonicalCode, '8032919997296'])
+const coverColibriSearchProduct = {
+  id: 'cover-colibri',
+  nom: 'Couverture Colibri',
+  codeBarres: coverColibriCanonicalCode,
+  type: 'cover',
+}
+const searchableProducts = [...products, coverColibriSearchProduct]
+const productsByBarcode = new Map(products.map((product) => [product.codeBarres, product]))
+const searchableProductsByBarcode = new Map(
+  searchableProducts.map((product) => [product.codeBarres, product]),
+)
+const searchableProductsById = new Map(
+  searchableProducts.map((product) => [product.id.toLowerCase(), product]),
+)
+const knownBarcodes = new Set(products.map((product) => product.codeBarres))
+const productsByLastFour = searchableProducts.reduce((productsBySuffix, product) => {
+  const suffix = product.codeBarres.slice(-4)
+  const currentProducts = productsBySuffix.get(suffix) ?? []
+
+  productsBySuffix.set(suffix, [...currentProducts, product])
+
+  return productsBySuffix
+}, new Map())
+const duplicateLastFourCodes = new Set(
+  Array.from(productsByLastFour)
+    .filter(([, matchedProducts]) => matchedProducts.length > 1)
+    .map(([suffix]) => suffix),
+)
 const ocrBarcodeCorrections = new Map([
   ['2006000022625', '2000000023625'],
   ['2000000023637', '2000000023632'],
@@ -111,6 +140,22 @@ function normalizeOcrCodeCandidate(candidate) {
 
 function isCoverColibriCode(candidate) {
   return coverColibriCodes.has(candidate)
+}
+
+function getBarcodeShortCode(codeBarres) {
+  return codeBarres.slice(-4)
+}
+
+function getReviewProduct(codeBarres) {
+  if (isCoverColibriCode(codeBarres)) {
+    return coverColibriSearchProduct
+  }
+
+  return productsByBarcode.get(codeBarres)
+}
+
+function getLineLastFourClass(codeBarres) {
+  return duplicateLastFourCodes.has(getBarcodeShortCode(codeBarres)) ? 'duplicate-last-four' : ''
 }
 
 function extractBarcodeLikeNumbers(text) {
@@ -257,11 +302,9 @@ function isOneEditAway(candidate, barcode) {
 }
 
 function resolveKnownBarcode(candidate) {
-  const productsByBarcode = new Map(products.map((product) => [product.codeBarres, product]))
-  const knownBarcodes = products.map((product) => product.codeBarres)
   const candidateVariants = getCandidateVariants(candidate)
 
-  const exactMatch = candidateVariants.find((variant) => knownBarcodes.includes(variant))
+  const exactMatch = candidateVariants.find((variant) => knownBarcodes.has(variant))
 
   if (exactMatch) {
     return exactMatch
@@ -270,13 +313,13 @@ function resolveKnownBarcode(candidate) {
   const leadingZeroMatch = candidateVariants
     .filter((variant) => variant.length === 12)
     .map((variant) => `0${variant}`)
-    .find((variant) => knownBarcodes.includes(variant))
+    .find((variant) => knownBarcodes.has(variant))
 
   if (leadingZeroMatch) {
     return leadingZeroMatch
   }
 
-  const containingMatch = knownBarcodes.find(
+  const containingMatch = Array.from(knownBarcodes).find(
     (barcode) => {
       const product = productsByBarcode.get(barcode)
 
@@ -294,7 +337,7 @@ function resolveKnownBarcode(candidate) {
     return containingMatch
   }
 
-  const closeMatches = knownBarcodes.filter((barcode) =>
+  const closeMatches = Array.from(knownBarcodes).filter((barcode) =>
     productsByBarcode.get(barcode)?.type !== 'manual' &&
     candidateVariants.some((variant) => isOneEditAway(variant, barcode)),
   )
@@ -349,10 +392,6 @@ function preparePrintedListCodesForOcr(bitmap) {
 }
 
 function buildPickingList(listLines = [], options = {}) {
-  const productsByBarcode = new Map(
-    products.map((product) => [product.codeBarres, product]),
-  )
-
   return listLines
     .map((line) => {
       const resolvedCode = resolveKnownBarcode(line.codeBarres)
@@ -403,7 +442,7 @@ function buildCoverColibriArticle(quantity = 0) {
   return {
     id: 'cover-colibri',
     nom: 'Couverture Colibri',
-    codeBarres: '8032919897296',
+    codeBarres: coverColibriCanonicalCode,
     quantite: quantity,
     type: 'cover',
     commentaire: '',
@@ -422,12 +461,10 @@ function buildCoverColibriArticle(quantity = 0) {
   }
 }
 
-function getCoverColibriQuantity(articles, detectedQuantity = 0) {
-  const manualCoverQuantity = articles
-    .filter((article) => article.type === 'manual' && article.aCouvrir)
-    .reduce((sum, article) => sum + article.quantite, 0)
-
-  return Math.max(detectedQuantity, manualCoverQuantity)
+function getCoverColibriLineQuantity(listLines = []) {
+  return listLines
+    .filter((line) => isCoverColibriCode(line.codeBarres))
+    .reduce((sum, line) => sum + line.quantite, 0)
 }
 
 function buildRecognitionDiagnostics(detectedCandidates) {
@@ -507,17 +544,46 @@ function mergeListLines(listLines) {
   )
 }
 
-function findProductFromSearch(searchValue) {
+function findProductsFromSearch(searchValue) {
   const query = searchValue.trim()
   const digits = query.replace(/\D/g, '')
-  const resolvedCode = digits ? resolveKnownBarcode(digits) : null
+  const loweredQuery = query.toLowerCase()
 
-  return products.find(
-    (product) =>
-      product.codeBarres === resolvedCode ||
-      product.codeBarres === digits ||
-      product.id.toLowerCase() === query.toLowerCase(),
-  )
+  if (digits.length === 4) {
+    return productsByLastFour.get(digits) ?? []
+  }
+
+  if (isCoverColibriCode(digits)) {
+    return [coverColibriSearchProduct]
+  }
+
+  const resolvedCode = digits ? resolveKnownBarcode(digits) : null
+  const matchedProduct =
+    searchableProductsByBarcode.get(resolvedCode) ??
+    searchableProductsByBarcode.get(digits) ??
+    searchableProductsById.get(loweredQuery)
+
+  return matchedProduct ? [matchedProduct] : []
+}
+
+function addDetectedPhotoLine(linesByCode, codeBarres, orderIndex, orderY = Number.POSITIVE_INFINITY) {
+  const currentLine = linesByCode.get(codeBarres)
+
+  if (!currentLine) {
+    linesByCode.set(codeBarres, {
+      codeBarres,
+      quantite: 1,
+      orderIndex,
+      orderY,
+    })
+    return
+  }
+
+  linesByCode.set(codeBarres, {
+    ...currentLine,
+    orderIndex: Math.min(currentLine.orderIndex, orderIndex),
+    orderY: Math.min(currentLine.orderY, orderY),
+  })
 }
 
 async function recognizeListFromPhotos(photoFiles) {
@@ -536,7 +602,7 @@ async function recognizeListFromPhotos(photoFiles) {
 
   for (const file of photoFiles) {
     const bitmap = await createImageBitmap(file)
-    const codesFromPhoto = new Set()
+    const linesFromPhoto = new Map()
 
     if (barcodeDetector) {
       const barcodes = (await barcodeDetector.detect(bitmap)).sort((first, second) => {
@@ -549,11 +615,19 @@ async function recognizeListFromPhotos(photoFiles) {
       barcodes.forEach((barcode) => {
         const rawCode = barcode.rawValue.replace(/\D/g, '')
         const codeBarres = resolveKnownBarcode(rawCode)
+        const barcodeBox = barcode.boundingBox ?? { top: Number.POSITIVE_INFINITY }
 
         if (rawCode) {
           if (isCoverColibriCode(rawCode)) {
             coverColibriDetected = true
             coverColibriQuantity = Math.max(coverColibriQuantity, 1)
+            addDetectedPhotoLine(
+              linesFromPhoto,
+              coverColibriCanonicalCode,
+              candidateOrder,
+              barcodeBox.top,
+            )
+            candidateOrder += 1
             return
           }
 
@@ -568,7 +642,7 @@ async function recognizeListFromPhotos(photoFiles) {
         }
 
         if (codeBarres) {
-          codesFromPhoto.add(codeBarres)
+          addDetectedPhotoLine(linesFromPhoto, codeBarres, candidateOrder, barcodeBox.top)
         }
       })
 
@@ -597,6 +671,8 @@ async function recognizeListFromPhotos(photoFiles) {
         if (isCoverColibriCode(candidate)) {
           coverColibriDetected = true
           coverColibriQuantity = Math.max(coverColibriQuantity, 1)
+          addDetectedPhotoLine(linesFromPhoto, coverColibriCanonicalCode, candidateOrder)
+          candidateOrder += 1
           return
         }
 
@@ -615,14 +691,16 @@ async function recognizeListFromPhotos(photoFiles) {
         }
 
         if (codeBarres) {
-          codesFromPhoto.add(codeBarres)
+          addDetectedPhotoLine(linesFromPhoto, codeBarres, candidateOrder)
         }
       })
     })
 
-    const photoLines = Array.from(codesFromPhoto).map((codeBarres) => ({
+    const photoLines = Array.from(linesFromPhoto.values())
+      .sort((first, second) => first.orderY - second.orderY || first.orderIndex - second.orderIndex)
+      .map(({ codeBarres, quantite }) => ({
         codeBarres,
-        quantite: 1,
+        quantite,
       }))
 
     photoResults.push({
@@ -860,9 +938,9 @@ function PageReviewScreen({ analysisResult, onBackToPhotos, onGoHome, onOpenPick
   }
 
   function addArticleToCurrentPage() {
-    const product = findProductFromSearch(addInput)
+    const matchedProducts = findProductsFromSearch(addInput)
 
-    if (!product) {
+    if (matchedProducts.length === 0) {
       setAddMessage('Code introuvable dans la base.')
       return
     }
@@ -873,20 +951,33 @@ function PageReviewScreen({ analysisResult, onBackToPhotos, onGoHome, onOpenPick
           return photoResult
         }
 
-        const existingLine = photoResult.lines.find((line) => line.codeBarres === product.codeBarres)
-        const nextLines = existingLine
-          ? photoResult.lines.map((line) =>
-              line.codeBarres === product.codeBarres
-                ? { ...line, quantite: line.quantite + 1 }
-                : line,
-            )
-          : [...photoResult.lines, { codeBarres: product.codeBarres, quantite: 1 }]
+        const nextLines = [...photoResult.lines]
+
+        matchedProducts.forEach((product) => {
+          const existingLineIndex = nextLines.findIndex(
+            (line) => line.codeBarres === product.codeBarres,
+          )
+
+          if (existingLineIndex === -1) {
+            nextLines.push({ codeBarres: product.codeBarres, quantite: 1 })
+            return
+          }
+
+          nextLines[existingLineIndex] = {
+            ...nextLines[existingLineIndex],
+            quantite: nextLines[existingLineIndex].quantite + 1,
+          }
+        })
 
         return { ...photoResult, lines: nextLines }
       }),
     )
     setAddInput('')
-    setAddMessage(`${product.nom} ajoute.`)
+    setAddMessage(
+      matchedProducts.length === 1
+        ? `${matchedProducts[0].nom} ajoute.`
+        : `${matchedProducts.length} articles ajoutes.`,
+    )
   }
 
   function goToNextPage() {
@@ -923,7 +1014,7 @@ function PageReviewScreen({ analysisResult, onBackToPhotos, onGoHome, onOpenPick
         <div className="review-add-row">
           <input
             inputMode="numeric"
-            placeholder="Ajouter un code"
+            placeholder="4 derniers chiffres"
             value={addInput}
             onChange={(event) => {
               setAddInput(event.target.value)
@@ -941,12 +1032,14 @@ function PageReviewScreen({ analysisResult, onBackToPhotos, onGoHome, onOpenPick
             <p className="review-empty">Aucun code connu reconnu sur cette page.</p>
           ) : (
             currentPhoto.lines.map((line) => {
-              const product = products.find(
-                (currentProduct) => currentProduct.codeBarres === line.codeBarres,
-              )
+              const product = getReviewProduct(line.codeBarres)
+              const lastFourClass = getLineLastFourClass(line.codeBarres)
 
               return (
-                <article className="review-line" key={line.codeBarres}>
+                <article
+                  className={`review-line ${lastFourClass}`.trim()}
+                  key={line.codeBarres}
+                >
                   <div className="review-quantity">
                     <button
                       aria-label="Retirer une quantite"
@@ -967,7 +1060,7 @@ function PageReviewScreen({ analysisResult, onBackToPhotos, onGoHome, onOpenPick
                   </div>
                   <div className="review-item-text">
                     <strong>{product?.nom ?? 'Article reconnu'}</strong>
-                    <code>{line.codeBarres}</code>
+                    <code className={lastFourClass}>{getBarcodeShortCode(line.codeBarres)}</code>
                   </div>
                   <button
                     className="review-line-remove"
@@ -998,7 +1091,7 @@ function SummaryRow({ article }) {
     <div className="missing-row" key={article.id}>
       <strong>{articleName.displayName}</strong>
       <span>x{article.quantite}</span>
-      <code>{article.codeBarres}</code>
+      <code>{getBarcodeShortCode(article.codeBarres)}</code>
       {articleName.comment && <small>{articleName.comment}</small>}
     </div>
   )
@@ -1158,8 +1251,7 @@ function PickingScreen({
         <div className="barcode-block">
           <span>Code-barres</span>
           <strong>
-            {currentArticle.codeBarres.slice(0, -4)}
-            <em>{currentArticle.codeBarres.slice(-4)}</em>
+            <em>{getBarcodeShortCode(currentArticle.codeBarres)}</em>
           </strong>
         </div>
       </section>
@@ -1209,13 +1301,13 @@ function App() {
   }
 
   function openRecognizedList(nextAnalysisResult = analysisResult) {
+    const listLines = nextAnalysisResult?.lines ?? []
+    const coverColibriQuantity = getCoverColibriLineQuantity(listLines)
+    const hasCoverColibri =
+      (nextAnalysisResult?.coverColibriDetected ?? false) || coverColibriQuantity > 0
     const recognizedArticles = buildPickingList(nextAnalysisResult?.lines ?? [], {
-      aCouvrir: nextAnalysisResult?.coverColibriDetected ?? false,
+      aCouvrir: hasCoverColibri,
     })
-    const coverColibriQuantity = getCoverColibriQuantity(
-      recognizedArticles,
-      nextAnalysisResult?.coverColibriQuantity ?? 0,
-    )
     const coverColibriArticle = buildCoverColibriArticle(coverColibriQuantity)
     const nextArticles = coverColibriArticle
       ? [...recognizedArticles, coverColibriArticle]
