@@ -1,16 +1,41 @@
-# React + Vite
+# Ars Una Picking
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Application de préparation des listes scolaires pour la librairie Ars Una. Elle permet de photographier une liste, de vérifier les articles reconnus puis de suivre leur collecte dans le magasin.
 
-Currently, two official plugins are available:
+## Fonctionnalités
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- reconnaissance des références à partir de photos avec OCR ;
+- vérification et correction des articles détectés ;
+- parcours de préparation avec plan du magasin, gestion des articles pris ou manquants et historique d'annulation ;
+- utilisation hors connexion sous forme de PWA ;
+- version Android générée avec Capacitor.
 
-## React Compiler
+## Technologies
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React ;
+- Vite ;
+- Tesseract.js ;
+- Capacitor.
 
-## Expanding the Oxlint configuration
+## Installation
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+npm install
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+Pour synchroniser le build avec le projet Android :
+
+```bash
+npm run android:sync
+```
+
+## Déploiement
+
+Chaque envoi sur la branche `main` déclenche le workflow GitHub Actions qui construit l'application et publie le dossier `dist` sur GitHub Pages.
